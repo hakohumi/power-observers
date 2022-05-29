@@ -16,8 +16,8 @@ use timer::init_timer;
 pub fn run() -> Result<()> {
     println!("Hello, world!");
 
-    for s in 0..3 {
-        log::info!("Start program in {} secs", 3 - s);
+    for s in 0..5 {
+        println!("Start program in {} secs", 5 - s);
         thread::sleep(Duration::from_secs(1));
     }
 
