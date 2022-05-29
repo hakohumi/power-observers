@@ -39,14 +39,16 @@ fn main() -> Result<()> {
                 .unwrap()
                 .0;
 
-            log::info!(
-                "Hall sensor reading: {}mV",
-                powered_adc1.read(&mut hall_sensor).unwrap()
-            );
-            log::info!(
-                "A2 sensor reading: {}mV",
-                powered_adc1.read(&mut a2).unwrap()
-            );
+            // println!(
+            //     "Hall sensor reading: {}mV",
+            //     powered_adc1.read(&mut hall_sensor).unwrap()
+            // );
+            // println!(
+            //     "A2 sensor reading: {}mV",
+            //     powered_adc1.read(&mut a2).unwrap()
+            // );
+
+            // TODO: ここでサーバに接続して、電力センサーからの値を送信する。
         }
     };
     Ok(())
