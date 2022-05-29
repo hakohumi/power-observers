@@ -4,6 +4,7 @@ use embedded_hal::adc::OneShot;
 use esp_idf_hal::adc;
 use esp_idf_hal::prelude::Peripherals;
 use std::sync::{Condvar, Mutex};
+use std::thread;
 use std::{sync::Arc, time::*};
 
 mod eventloop;
@@ -14,6 +15,11 @@ use timer::init_timer;
 
 pub fn run() -> Result<()> {
     println!("Hello, world!");
+
+    for s in 0..3 {
+        log::info!("Start program in {} secs", 3 - s);
+        thread::sleep(Duration::from_secs(1));
+    }
 
     let peripherals = Peripherals::take().unwrap();
     let pins = peripherals.pins;
