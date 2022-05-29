@@ -10,7 +10,7 @@ mod eventloop;
 use crate::eventloop::test_eventloop;
 
 mod timer;
-use timer::test_timer;
+use timer::init_timer;
 
 pub fn run() -> Result<()> {
     println!("Hello, world!");
@@ -24,7 +24,7 @@ pub fn run() -> Result<()> {
     )?;
 
     let (eventloop, _subscription) = test_eventloop()?;
-    let _timer = test_timer(eventloop)?;
+    let _timer = init_timer(eventloop)?;
 
     let mutex = Arc::new((Mutex::new(None), Condvar::new()));
 

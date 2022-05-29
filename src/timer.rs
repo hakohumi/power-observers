@@ -10,7 +10,7 @@ use std::time::Duration;
 
 use crate::eventloop::EventLoopMessage;
 
-pub fn test_timer(mut eventloop: EspBackgroundEventLoop) -> Result<EspTimer> {
+pub fn init_timer(mut eventloop: EspBackgroundEventLoop) -> Result<EspTimer> {
     use embedded_svc::event_bus::Postbox;
 
     println!("About to schedule a one-shot timer for after 2 seconds");
