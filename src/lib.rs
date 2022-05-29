@@ -10,6 +10,8 @@ use crate::eventloop::test_eventloop;
 mod timer;
 use timer::init_timer;
 
+mod power_sensor;
+
 pub fn run() -> Result<()> {
     println!("Hello, world!");
 
@@ -35,7 +37,6 @@ pub fn run() -> Result<()> {
                 .wait_timeout(wait, Duration::from_secs(1))
                 .unwrap()
                 .0;
-
         }
     };
     Ok(())

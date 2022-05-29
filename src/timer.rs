@@ -13,7 +13,7 @@ use esp_idf_hal::prelude::Peripherals;
 
 use crate::eventloop::EventLoopMessage;
 
-pub fn init_timer(mut eventloop: EspBackgroundEventLoop) -> Result<EspTimer> {
+pub fn init_timer(mut eventloop: EspBackgroundEventLoop) -> Result<(EspTimer, EspTimer)> {
     use embedded_svc::event_bus::Postbox;
 
     let peripherals = Peripherals::take().unwrap();
@@ -25,24 +25,29 @@ pub fn init_timer(mut eventloop: EspBackgroundEventLoop) -> Result<EspTimer> {
         adc::config::Config::new().calibration(true),
     )?;
 
-    let mut periodic_timer = EspTimerService::new()?.timer(move || {
-        println!("Tick from periodic timer");
+    let mut _counter = 0;
 
-        let now = EspSystemTime {}.now();
+    let mut read_timer = EspTimerService::new()?.timer(move || {
+        _counter += 1;
+        if _counter > 10 {
+            _counter = 0;
+        }
 
-        eventloop.post(&EventLoopMessage::new(now), None).unwrap();
-
-        println!("eventloop test {:?}", now.to_owned());
+        println!("eventloop test {:?}", _counter);
 
         // TODO: ここでサーバに接続して、電力センサーからの値を送信する。
+    })?;
 
+    let mut print_timer = EspTimerService::new()?.timer(move || {
         println!(
             "A2 sensor reading: {}mV",
             powered_adc1.read(&mut a2).unwrap()
         );
     })?;
 
-    periodic_timer.every(Duration::from_millis(8))?;
+    print_timer.every(Duration::from_secs(1))?;
 
-    Ok(periodic_timer)
+    read_timer.every(Duration::from_millis(8))?;
+
+    Ok((read_timer, print_timer))
 }
