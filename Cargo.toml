@@ -27,6 +27,8 @@ anyhow = {version = "1", features = ["backtrace"]}
 esp-idf-hal = "0.37.4"
 log = "0.4.17"
 embedded-hal = "0.2.7"
+embedded-svc = "0.21"
+esp-idf-svc = "0.41"
 
 [build-dependencies]
 embuild = "0.29"
