@@ -1,9 +1,6 @@
-use embedded_svc::sys_time::SystemTime;
 use embedded_svc::timer::{PeriodicTimer, TimerService};
 
 use anyhow::{Ok, Result};
-use esp_idf_svc::eventloop::EspBackgroundEventLoop;
-use esp_idf_svc::systime::EspSystemTime;
 use esp_idf_svc::timer::{EspTimer, EspTimerService};
 use std::time::Duration;
 
@@ -11,11 +8,8 @@ use embedded_hal::adc::OneShot;
 use esp_idf_hal::adc;
 use esp_idf_hal::prelude::Peripherals;
 
-use crate::eventloop::EventLoopMessage;
 
-pub fn init_timer(mut eventloop: EspBackgroundEventLoop) -> Result<(EspTimer, EspTimer)> {
-    use embedded_svc::event_bus::Postbox;
-
+pub fn init_timer() -> Result<(EspTimer, EspTimer)> {
     let peripherals = Peripherals::take().unwrap();
     let pins = peripherals.pins;
 

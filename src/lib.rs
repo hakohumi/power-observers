@@ -4,9 +4,6 @@ use std::sync::{Condvar, Mutex};
 use std::thread;
 use std::{sync::Arc, time::*};
 
-mod eventloop;
-use crate::eventloop::test_eventloop;
-
 mod timer;
 use timer::init_timer;
 
@@ -20,8 +17,7 @@ pub fn run() -> Result<()> {
         thread::sleep(Duration::from_secs(1));
     }
 
-    let (eventloop, _subscription) = test_eventloop()?;
-    let _timer = init_timer(eventloop)?;
+    let _timer = init_timer()?;
 
     let mutex = Arc::new((Mutex::new(None), Condvar::new()));
 
