@@ -23,25 +23,13 @@ pub fn init_timer() -> Result<(EspTimer, EspTimer)> {
 
     let mut hall_sensor = peripherals.hall_sensor;
 
-    let my_power_sensor = Arc::new(Mutex::new(PowerSensor::init(0, 0, 0)));
+    let my_power_sensor = Arc::new(Mutex::new(PowerSensor::init()));
 
     let my1 = Arc::clone(&my_power_sensor);
     let my2 = Arc::clone(&my_power_sensor);
 
     let mut read_timer = EspTimerService::new()?.timer(move || {
         let mut _my_power_sensor = my1.lock().unwrap();
-        _my_power_sensor.counter += 1;
-
-        if _my_power_sensor.counter > 9 {
-            _my_power_sensor.counter = 0;
-
-            _my_power_sensor.average_adc = _my_power_sensor.acc_adc_value / 10;
-            println!(
-                "_my_power_sensor.adc_value {} average adc {}",
-                _my_power_sensor.acc_adc_value, _my_power_sensor.average_adc
-            );
-            _my_power_sensor.acc_adc_value = 0;
-        }
 
         _my_power_sensor.add_adc_value(powered_adc1.read(&mut hall_sensor).unwrap() as u32);
         println!("adc value {}", _my_power_sensor.acc_adc_value);
@@ -49,8 +37,12 @@ pub fn init_timer() -> Result<(EspTimer, EspTimer)> {
     })?;
 
     let mut print_timer = EspTimerService::new()?.timer(move || {
-        println!("timer test {:?}", my2.lock().unwrap().counter);
-        println!("A2 sensor reading: {}mV", my2.lock().unwrap().average_adc);
+        let mut _my_power_sensor = my2.lock().unwrap();
+        println!("timer test {:?}", _my_power_sensor.counter);
+        println!(
+            "A2 sensor reading: {}mV",
+            _my_power_sensor.get_adc_average()
+        );
         // TODO: ここでサーバに接続して、電力センサーからの値を送信する。
     })?;
 
