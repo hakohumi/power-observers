@@ -4,7 +4,7 @@ pub struct PowerSensor {
     pub average_adc: u32,
 }
 
-// TODO: リングバッファ方式の平均
+// TODO: 1秒ごとの平均
 
 impl PowerSensor {
     pub fn init(counter: u32, adc_value: u32, average_adc: u32) -> Self {
