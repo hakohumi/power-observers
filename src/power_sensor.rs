@@ -1,22 +1,22 @@
-
 pub struct PowerSensor {
-    counter: Box<u32>,
+    pub counter: u32,
+    pub acc_adc_value: u32,
+    pub average_adc: u32,
 }
 
+// TODO: リングバッファ方式の平均
+
 impl PowerSensor {
-    pub fn init(mut args: Box<u32>) -> Self {
-        let app = Self { counter: args };
+    pub fn init(counter: u32, adc_value: u32, average_adc: u32) -> Self {
+        let app = Self {
+            counter,
+            acc_adc_value: adc_value,
+            average_adc,
+        };
         app
     }
 
-    pub fn get_counter(&self) {
-        &self._counter;
+    pub fn add_adc_value(&mut self, adc_value: u32) {
+        self.acc_adc_value += adc_value;
     }
-
-    pub fn add_count(&self) {
-        let mut _counter = &self.counter;
-        &self.counter += 1;
-    }
-
-    pub fn read(&self) {}
 }
