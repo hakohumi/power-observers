@@ -21,8 +21,6 @@ pub fn init_timer() -> Result<(EspTimer, EspTimer)> {
         adc::config::Config::new().calibration(true),
     )?;
 
-    let mut hall_sensor = peripherals.hall_sensor;
-
     let my_power_sensor = Arc::new(Mutex::new(PowerSensor::init()));
 
     let my1 = Arc::clone(&my_power_sensor);
@@ -30,15 +28,13 @@ pub fn init_timer() -> Result<(EspTimer, EspTimer)> {
 
     let mut read_timer = EspTimerService::new()?.timer(move || {
         let mut _my_power_sensor = my1.lock().unwrap();
-
-        _my_power_sensor.add_adc_value(powered_adc1.read(&mut hall_sensor).unwrap() as u32);
-        println!("adc value {}", _my_power_sensor.acc_adc_value);
-        // adc_value += powered_adc1.read(&mut a2).unwrap() as u32;
+        let adc_read_value = powered_adc1.read(&mut a2).unwrap() as u32;
+        println!("A2 sensor raw reading: {}mV", adc_read_value);
+        _my_power_sensor.add_diff(adc_read_value);
     })?;
 
     let mut print_timer = EspTimerService::new()?.timer(move || {
         let mut _my_power_sensor = my2.lock().unwrap();
-        println!("timer test {:?}", _my_power_sensor.counter);
         println!(
             "A2 sensor reading: {}mV",
             _my_power_sensor.get_adc_average()
