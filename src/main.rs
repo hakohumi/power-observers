@@ -7,6 +7,8 @@ fn main() -> Result<()> {
     // or else some patches to the runtime implemented by esp-idf-sys might not link properly.
     esp_idf_sys::link_patches();
 
+    esp_idf_svc::log::EspLogger::initialize_default();
+
     run()?;
 
     Ok(())
