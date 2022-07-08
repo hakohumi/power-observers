@@ -27,7 +27,8 @@ impl PowerSensor {
     }
 
     pub fn add_diff(&mut self, adc_value: u32) {
-        self.acc_adc_value += (self.old_value - adc_value).pow(2) as u32;
+        self.acc_adc_value += (self.old_value as i32 - adc_value as i32).pow(2) as u32;
+        self.old_value = adc_value;
         self.counter += 1;
     }
 
