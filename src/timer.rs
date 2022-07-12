@@ -29,7 +29,7 @@ pub fn init_timer() -> Result<(EspTimer, EspTimer)> {
     let mut read_timer = EspTimerService::new()?.timer(move || {
         let mut _my_power_sensor = my1.lock().unwrap();
         let adc_read_value = powered_adc1.read(&mut a2).unwrap() as u32;
-        println!("A2 sensor raw reading: {}mV", adc_read_value);
+        // println!("A2 sensor raw reading: {}mV", adc_read_value);
         _my_power_sensor.add_diff(adc_read_value);
     })?;
 

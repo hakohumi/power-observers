@@ -1,4 +1,5 @@
 use anyhow::{Ok, Result};
+use embedded_svc::event_bus::Postbox;
 
 use std::sync::{Condvar, Mutex};
 use std::thread;
@@ -8,6 +9,11 @@ mod timer;
 use timer::init_timer;
 
 mod power_sensor;
+
+mod eventloop;
+use eventloop::test_eventloop;
+
+use crate::eventloop::EventLoopMessage;
 
 pub fn run() -> Result<()> {
     println!("Hello, world!");
@@ -21,6 +27,8 @@ pub fn run() -> Result<()> {
 
     let mutex = Arc::new((Mutex::new(None), Condvar::new()));
 
+    let (mut event, _subscription) = test_eventloop().unwrap();
+
     let mut wait = mutex.0.lock().unwrap();
 
     #[allow(unused)]
@@ -33,6 +41,9 @@ pub fn run() -> Result<()> {
                 .wait_timeout(wait, Duration::from_secs(1))
                 .unwrap()
                 .0;
+            event
+                .post(&EventLoopMessage::new(Duration::from_secs(1)), None)
+                .unwrap();
         }
     };
     Ok(())
