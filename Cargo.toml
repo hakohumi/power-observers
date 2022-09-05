@@ -24,12 +24,12 @@ pio = ["esp-idf-sys/pio"]
 [dependencies]
 esp-idf-sys = { version = "0.31.5", features = ["binstart"] }
 anyhow = {version = "1", features = ["backtrace"]}
-esp-idf-hal = "0.37.4"
 log = "0.4.17"
 embedded-hal = "0.2.7"
-embedded-svc = "0.21"
-esp-idf-svc = "0.41"
+embedded-svc = "0.22"
+esp-idf-hal = "0.38.1"
+esp-idf-svc = "0.42"
 
 [build-dependencies]
-embuild = "0.29"
+embuild = "0.30"
 anyhow = "1"
