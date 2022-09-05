@@ -1,5 +1,9 @@
 use anyhow::{Ok, Result};
 use embedded_svc::event_bus::Postbox;
+use esp_idf_svc::netif::EspNetifStack;
+use esp_idf_svc::nvs::EspDefaultNvs;
+use esp_idf_svc::sysloop::EspSysLoopStack;
+use log::info;
 
 use std::sync::{Condvar, Mutex};
 use std::thread;
@@ -9,11 +13,11 @@ mod timer;
 use timer::init_timer;
 
 mod power_sensor;
+mod wifi;
+use wifi::wifi;
 
 mod eventloop;
-use eventloop::test_eventloop;
 
-use crate::eventloop::EventLoopMessage;
 
 pub fn run() -> Result<()> {
     println!("Hello, world!");
@@ -22,12 +26,21 @@ pub fn run() -> Result<()> {
         println!("Start program in {} secs", 5 - s);
         thread::sleep(Duration::from_secs(1));
     }
+    let netif_stack = Arc::new(EspNetifStack::new()?);
+    let sys_loop_stack = Arc::new(EspSysLoopStack::new()?);
+    let default_nvs = Arc::new(EspDefaultNvs::new()?);
+
+    let mut wifi = wifi(
+        netif_stack.clone(),
+        sys_loop_stack.clone(),
+        default_nvs.clone(),
+    )?;
 
     let _timer = init_timer()?;
 
     let mutex = Arc::new((Mutex::new(None), Condvar::new()));
 
-    let (mut event, _subscription) = test_eventloop().unwrap();
+    let (mut event, _subscription) = eventloop::test_eventloop().unwrap();
 
     let mut wait = mutex.0.lock().unwrap();
 
@@ -42,9 +55,13 @@ pub fn run() -> Result<()> {
                 .unwrap()
                 .0;
             event
-                .post(&EventLoopMessage::new(Duration::from_secs(1)), None)
+                .post(&eventloop::EventLoopMessage::new(Duration::from_secs(1)), None)
                 .unwrap();
         }
     };
+
+    drop(wifi);
+    info!("Wifi stopped");
+
     Ok(())
 }
